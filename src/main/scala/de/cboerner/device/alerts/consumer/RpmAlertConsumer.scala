@@ -39,7 +39,7 @@ class RpmAlertConsumer(alertCoordinator: ActorRef) extends BaseConsumer(alertCoo
   val config = context.system.settings.config.getConfig("akka.kafka.consumer")
   val consumerSettings =
     ConsumerSettings(config, new StringDeserializer, new StringDeserializer)
-      .withBootstrapServers("localhost:9092")
+      .withBootstrapServers("172.29.15.246:9092")
       .withGroupId("rpm-alert-group")
       .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
 
