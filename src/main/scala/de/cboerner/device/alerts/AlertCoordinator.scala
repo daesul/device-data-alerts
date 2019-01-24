@@ -1,8 +1,10 @@
 package de.cboerner.device.alerts
 
+import akka.Done
 import akka.actor.SupervisorStrategy.Restart
 import akka.actor.{Actor, ActorLogging, OneForOneStrategy, Props, Terminated}
 import de.cboerner.device.alerts.consumer.{HeatAlertConsumer, RpmAlertConsumer}
+
 import scala.concurrent.duration._
 
 
@@ -28,8 +30,12 @@ final class AlertCoordinator extends Actor with ActorLogging{
 
   override def receive: Receive = {
     case terminated:Terminated => log.info(s"${terminated.actor.path.name}")
-    case heatAlert:HeatAlertConsumer.HeatAlert => heatAlertCoordinator ! HeatAlert.Alert(heatAlert.deviceId, heatAlert.temperature)
-    case rpmAlert:RpmAlertConsumer.RpmAlert => rpmAlertCoordinator ! RpmAlert.Alert(rpmAlert.deviceId, rpmAlert.rpm)
+    case heatAlert:HeatAlertConsumer.HeatAlert =>
+      heatAlertCoordinator ! HeatAlert.Alert(heatAlert.deviceId, heatAlert.temperature)
+      sender() ! Done
+    case rpmAlert:RpmAlertConsumer.RpmAlert =>
+      rpmAlertCoordinator ! RpmAlert.Alert(rpmAlert.deviceId, rpmAlert.rpm)
+      sender() ! Done
   }
 }
 
